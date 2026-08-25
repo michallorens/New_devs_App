@@ -14,8 +14,6 @@ services:
     depends_on:
       - db
       - redis
-    volumes:
-      - ./backend:/app
 
   frontend:
     build:
