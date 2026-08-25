@@ -224,7 +224,7 @@ export class SecureAPIClient {
       if (token) {
         const payload = JSON.parse(atob(token.split('.')[1]));
         // Use user sub (unique ID) + email as session key for isolation
-        const userSub = payload.sub;
+        const userSub = payload.sub || payload.id;
         const userEmail = payload.email;
 
         if (userSub && userEmail) {
@@ -240,12 +240,11 @@ export class SecureAPIClient {
   }
 
   /**
-   * Validate tenant ID format for security
+   * Validate tenant ID format for security.
+   * Local challenge tenants use stable text IDs such as tenant-a.
    */
   private isValidTenantId(tenantId: string): boolean {
-    // Check for UUID format (basic validation)
-    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-    return typeof tenantId === 'string' && tenantId.length > 0 && uuidRegex.test(tenantId);
+    return typeof tenantId === 'string' && /^[a-zA-Z0-9_-]+$/.test(tenantId);
   }
 
   /**
